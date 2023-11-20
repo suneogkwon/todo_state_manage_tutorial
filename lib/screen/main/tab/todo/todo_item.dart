@@ -7,8 +7,8 @@ import 'package:fast_app_base/data/memory/vo/todo_vo.dart';
 import 'package:fast_app_base/screen/main/tab/todo/todo_status_widget.dart';
 import 'package:flutter/material.dart';
 
-class TodoItem extends StatelessWidget with TodoDataProvider {
-  TodoItem({
+class TodoItem extends StatelessWidget {
+  const TodoItem({
     super.key,
     required this.todo,
   });
@@ -46,7 +46,7 @@ class TodoItem extends StatelessWidget with TodoDataProvider {
         ),
       ),
       onDismissed: (direction) {
-        todoData.remove(todo);
+        context.todoHolder.remove(todo);
       },
       child: RoundedContainer(
         color: context.appColors.itemBackground,
@@ -72,7 +72,7 @@ class TodoItem extends StatelessWidget with TodoDataProvider {
                 ),
                 IconButton(
                   onPressed: () {
-                    todoData.editTodo(todo);
+                    context.todoHolder.editTodo(todo);
                   },
                   icon: const Icon(
                     EvaIcons.editOutline,

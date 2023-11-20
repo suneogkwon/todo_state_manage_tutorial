@@ -1,9 +1,9 @@
 import 'package:fast_app_base/common/common.dart';
 import 'package:fast_app_base/common/theme/custom_theme_app.dart';
 import 'package:fast_app_base/data/memory/todo_data_holder.dart';
+import 'package:fast_app_base/data/memory/todo_data_notifier.dart';
 import 'package:fast_app_base/screen/main/s_main.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import 'common/theme/custom_theme.dart';
 
@@ -21,19 +21,21 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> with Nav, WidgetsBindingObserver {
+  final todoNotifier = TodoDataNotifier();
+
   @override
   GlobalKey<NavigatorState> get navigatorKey => App.navigatorKey;
 
   @override
   void initState() {
     super.initState();
-    Get.put(TodoDataHolder());
     WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    todoNotifier.dispose();
     super.dispose();
   }
 
@@ -41,14 +43,17 @@ class AppState extends State<App> with Nav, WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return CustomThemeApp(
       child: Builder(builder: (context) {
-        return MaterialApp(
-          navigatorKey: App.navigatorKey,
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          locale: context.locale,
-          title: 'Image Finder',
-          theme: context.themeType.themeData,
-          home: const MainScreen(),
+        return TodoDataHolder(
+          notifier: todoNotifier,
+          child: MaterialApp(
+            navigatorKey: App.navigatorKey,
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
+            title: 'Image Finder',
+            theme: context.themeType.themeData,
+            home: const MainScreen(),
+          ),
         );
       }),
     );

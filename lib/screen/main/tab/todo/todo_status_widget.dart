@@ -5,8 +5,8 @@ import 'package:fast_app_base/data/memory/vo/todo_status.dart';
 import 'package:fast_app_base/data/memory/vo/todo_vo.dart';
 import 'package:flutter/material.dart';
 
-class TodoStatusWidget extends StatelessWidget with TodoDataProvider {
-  TodoStatusWidget({
+class TodoStatusWidget extends StatelessWidget {
+  const TodoStatusWidget({
     super.key,
     required this.todo,
   });
@@ -17,7 +17,7 @@ class TodoStatusWidget extends StatelessWidget with TodoDataProvider {
   Widget build(BuildContext context) {
     return Tap(
       onTap: () {
-        todoData.changeTodoStatus(todo);
+        context.todoHolder.changeTodoStatus(todo);
       },
       child: SizedBox(
         width: 50,
