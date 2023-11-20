@@ -1,7 +1,8 @@
 import 'package:fast_app_base/common/theme/custom_theme.dart';
 import 'package:fast_app_base/common/theme/custom_theme_holder.dart';
-import 'package:fast_app_base/data/memory/todo_data_holder.dart';
+import 'package:fast_app_base/data/memory/todo_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../common.dart';
 
@@ -46,4 +47,7 @@ extension ContextExtension on BuildContext {
 
   Function(CustomTheme) get changeTheme =>
       CustomThemeHolder.of(this).changeTheme;
+
+  TodoBloc get readTodoBloc => read();
+  TodoBloc get watchTodoCubit => watch();
 }
