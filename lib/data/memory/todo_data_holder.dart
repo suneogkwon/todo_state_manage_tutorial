@@ -3,22 +3,28 @@ import 'package:fast_app_base/data/memory/vo/todo_vo.dart';
 import 'package:fast_app_base/screen/dialog/d_confirm.dart';
 import 'package:fast_app_base/screen/main/write/write_todo_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 
-class TodoDataHolder extends GetxController {
-  final RxList<Todo> todoList = <Todo>[].obs;
+final todoDataProvider = StateNotifierProvider<TodoDataHolder, List<Todo>>(
+  (ref) => TodoDataHolder(),
+);
+
+class TodoDataHolder extends StateNotifier<List<Todo>> {
+  TodoDataHolder() : super([]);
 
   void addTodo() async {
     final result = await WriteTodoDialog().show();
 
     if (result != null) {
-      todoList.add(
+      state.add(
         Todo(
           id: DateTime.now().millisecondsSinceEpoch,
           title: result.text,
           dueDate: result.dateTime,
         ),
       );
+      state = List.of(state);
     }
   }
 
@@ -37,7 +43,7 @@ class TodoDataHolder extends GetxController {
         });
     }
 
-    todoList.refresh();
+    state = List.of(state);
   }
 
   void editTodo(Todo todo) async {
@@ -46,16 +52,22 @@ class TodoDataHolder extends GetxController {
     if (result != null) {
       todo.title = result.text;
       todo.dueDate = result.dateTime;
-      todoList.refresh();
+
+      final resolvedTodoList = List.of(state);
+      final todoIndex = resolvedTodoList.indexWhere(
+        (element) => element.id == todo.id,
+      );
+
+      state = resolvedTodoList..[todoIndex] = todo;
     }
   }
 
   void remove(Todo todo) {
-    todoList.remove(todo);
-    todoList.refresh();
+    state.remove(todo);
+    state = List.of(state);
   }
 }
 
-mixin class TodoDataProvider {
-  late final TodoDataHolder todoData = Get.find();
+extension TodoListHolderProvider on WidgetRef {
+  TodoDataHolder get todoHolder => read(todoDataProvider.notifier);
 }

@@ -6,8 +6,9 @@ import 'package:fast_app_base/data/memory/todo_data_holder.dart';
 import 'package:fast_app_base/data/memory/vo/todo_vo.dart';
 import 'package:fast_app_base/screen/main/tab/todo/todo_status_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TodoItem extends StatelessWidget with TodoDataProvider {
+class TodoItem extends ConsumerWidget {
   TodoItem({
     super.key,
     required this.todo,
@@ -16,7 +17,7 @@ class TodoItem extends StatelessWidget with TodoDataProvider {
   final Todo todo;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Dismissible(
       key: ValueKey(todo.id),
       background: RoundedContainer(
@@ -46,7 +47,7 @@ class TodoItem extends StatelessWidget with TodoDataProvider {
         ),
       ),
       onDismissed: (direction) {
-        todoData.remove(todo);
+        ref.todoHolder.remove(todo);
       },
       child: RoundedContainer(
         color: context.appColors.itemBackground,
@@ -72,7 +73,7 @@ class TodoItem extends StatelessWidget with TodoDataProvider {
                 ),
                 IconButton(
                   onPressed: () {
-                    todoData.editTodo(todo);
+                    ref.todoHolder.editTodo(todo);
                   },
                   icon: const Icon(
                     EvaIcons.editOutline,

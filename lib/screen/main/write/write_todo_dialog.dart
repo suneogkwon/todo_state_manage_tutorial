@@ -7,9 +7,9 @@ import 'package:fast_app_base/common/widget/w_round_button.dart';
 import 'package:fast_app_base/data/memory/vo/todo_vo.dart';
 import 'package:fast_app_base/screen/main/write/write_todo_result_vo.dart';
 import 'package:flutter/material.dart';
-import 'package:nav/dialog/dialog.dart';
+import 'package:nav_hooks/dialog/hook_dialog.dart';
 
-class WriteTodoDialog extends DialogWidget<WriteTodoResult> {
+class WriteTodoDialog extends HookDialogWidget<WriteTodoResult> {
   WriteTodoDialog({
     super.key,
     this.todo,
@@ -18,44 +18,35 @@ class WriteTodoDialog extends DialogWidget<WriteTodoResult> {
   final Todo? todo;
 
   @override
-  DialogState<WriteTodoDialog> createState() => _WriteTodoDialogState();
-}
-
-class _WriteTodoDialogState extends DialogState<WriteTodoDialog> {
-  DateTime _selectedDate = DateTime.now();
-  final textController = TextEditingController();
-  final node = FocusNode();
-
-  get isEdit => widget.todo != null;
-
-  void _selectDate() async {
-    final date = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime.now().subtract(365.days),
-      lastDate: DateTime.now().add(3650.days),
-    );
-    if (date != null) {
-      setState(() {
-        _selectedDate = date;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.todo != null) {
-      _selectedDate = widget.todo!.dueDate;
-      textController.text = widget.todo!.title;
-    }
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      AppKeyboardUtil.show(context, node);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final selectedDate = useState(DateTime.now());
+    final textController = useTextEditingController();
+    final textController2 = useTextEditingController();
+    final node = useFocusNode();
+
+    useMemoized(() {
+      if (todo != null) {
+        selectedDate.value = todo!.dueDate;
+        textController.text = todo!.title;
+      }
+
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        AppKeyboardUtil.show(context, node);
+      });
+    });
+
+    final Future<void> Function() onSelectDate = useCallback(() async {
+      final date = await showDatePicker(
+        context: context,
+        initialDate: selectedDate.value,
+        firstDate: DateTime.now().subtract(365.days),
+        lastDate: DateTime.now().add(3650.days),
+      );
+      if (date != null) {
+        selectedDate.value = date;
+      }
+    });
+
     return BottomDialogScaffold(
       body: RoundedContainer(
         color: context.backgroundColor,
@@ -72,10 +63,10 @@ class _WriteTodoDialogState extends DialogState<WriteTodoDialog> {
                 ),
                 Spacer(),
                 Text(
-                  _selectedDate.formattedDate,
+                  selectedDate.value.formattedDate,
                 ),
                 IconButton(
-                  onPressed: _selectDate,
+                  onPressed: onSelectDate,
                   icon: Icon(Icons.calendar_month),
                 ),
               ],
@@ -90,11 +81,11 @@ class _WriteTodoDialogState extends DialogState<WriteTodoDialog> {
                   ),
                 ),
                 RoundButton(
-                  text: isEdit ? '수정' : '추가',
+                  text: todo != null ? '수정' : '추가',
                   onTap: () {
-                    widget.hide(
+                    hide(
                       WriteTodoResult(
-                        dateTime: _selectedDate,
+                        dateTime: selectedDate.value,
                         text: textController.text,
                       ),
                     );
