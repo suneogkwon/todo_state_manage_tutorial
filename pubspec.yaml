@@ -73,6 +73,7 @@ dependencies:
   freezed: ^2.3.4
   freezed_annotation: ^2.2.0
   json_annotation: ^4.8.0
+  rive: ^0.12.3
 
 dev_dependencies:
   flutter_test:
@@ -112,6 +113,14 @@ flutter:
     - assets/image/darkmode/
     - assets/translations/
     - assets/
+    - assets/rive/
+    - assets/image/bank/
+    - assets/image/stock/
+    - assets/image/splash/
+    - assets/image/benefit/
+    - assets/image/credit_card/
+    - assets/image/illustration/
+    - assets/image/notification/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

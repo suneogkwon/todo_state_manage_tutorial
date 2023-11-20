@@ -1,7 +1,9 @@
 import 'package:fast_app_base/common/common.dart';
 import 'package:fast_app_base/common/theme/custom_theme_app.dart';
+import 'package:fast_app_base/data/memory/todo_data_holder.dart';
 import 'package:fast_app_base/screen/main/s_main.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'common/theme/custom_theme.dart';
 
@@ -25,6 +27,7 @@ class AppState extends State<App> with Nav, WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    Get.put(TodoDataHolder());
     WidgetsBinding.instance.addObserver(this);
   }
 
